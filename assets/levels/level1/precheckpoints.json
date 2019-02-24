@@ -1,0 +1,784 @@
+{
+  "layers": [
+    {
+      "name": "Layer 1",
+      "zOrderPosition": 1,
+      "paths": [
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              932,
+              413
+            ],
+            [
+              973,
+              499
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              967,
+              390
+            ],
+            [
+              1026,
+              466
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              1012,
+              347
+            ],
+            [
+              1069,
+              419
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              1036,
+              315
+            ],
+            [
+              1119,
+              344
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              1031,
+              287
+            ],
+            [
+              1120,
+              247
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              1009,
+              270
+            ],
+            [
+              1027,
+              187
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              960,
+              281
+            ],
+            [
+              945,
+              190
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              919,
+              306
+            ],
+            [
+              861,
+              244
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              882,
+              340
+            ],
+            [
+              821,
+              278
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              830,
+              384
+            ],
+            [
+              767,
+              322
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              772,
+              438
+            ],
+            [
+              733,
+              350
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              669.999999999999,
+              449
+            ],
+            [
+              701,
+              366
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              597.999999999999,
+              400
+            ],
+            [
+              677.999999999999,
+              359
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              575.999999999999,
+              329
+            ],
+            [
+              678.999999999999,
+              339
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              706,
+              311
+            ],
+            [
+              602.999999999999,
+              287
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              732,
+              258
+            ],
+            [
+              633.999999999999,
+              251
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              690,
+              162
+            ],
+            [
+              617.999999999999,
+              211
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              635.999999999999,
+              106
+            ],
+            [
+              579.999999999999,
+              175
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              567.999999999999,
+              74
+            ],
+            [
+              538.999999999999,
+              156
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              490.999999999999,
+              62
+            ],
+            [
+              475.999999999999,
+              147
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              413.999999999999,
+              51
+            ],
+            [
+              415.999999999999,
+              143
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              314.999999999999,
+              68
+            ],
+            [
+              354.999999999999,
+              149
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              238.999999999999,
+              131
+            ],
+            [
+              318.999999999999,
+              165
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              210.999999999999,
+              208
+            ],
+            [
+              306.999999999999,
+              211
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              214.999999999999,
+              261
+            ],
+            [
+              319.999999999999,
+              247
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              209.999999999999,
+              305
+            ],
+            [
+              297.999999999999,
+              337
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              184.999999999999,
+              385
+            ],
+            [
+              274.999999999999,
+              391
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              181.999999999999,
+              438
+            ],
+            [
+              269.999999999999,
+              430
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              190.999999999999,
+              511
+            ],
+            [
+              277.999999999999,
+              485
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              203.999999999999,
+              570
+            ],
+            [
+              284.999999999999,
+              543
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              263.999999999999,
+              656
+            ],
+            [
+              292.999999999999,
+              572
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              355.999999999999,
+              638
+            ],
+            [
+              314.999999999999,
+              559
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              391.999999999999,
+              617
+            ],
+            [
+              362.999999999999,
+              530
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              428.999999999999,
+              614
+            ],
+            [
+              425.999999999999,
+              526
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              464.999999999999,
+              634
+            ],
+            [
+              518.999999999999,
+              555
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              508.999999999999,
+              670
+            ],
+            [
+              561.999999999999,
+              599
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              593.999999999999,
+              696
+            ],
+            [
+              587.999999999999,
+              599
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              657.999999999999,
+              683
+            ],
+            [
+              621.999999999999,
+              591
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              732,
+              652
+            ],
+            [
+              655.999999999999,
+              576
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 2.91038304567337e-11,
+          "points": [
+            [
+              759,
+              594
+            ],
+            [
+              672.999999999999,
+              538
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              775,
+              557
+            ],
+            [
+              705,
+              483
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              833,
+              545
+            ],
+            [
+              799,
+              436
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        },
+        {
+          "name": "PathItem",
+          "area": 0,
+          "points": [
+            [
+              893,
+              531
+            ],
+            [
+              862,
+              430
+            ]
+          ],
+          "centroid": [
+            null,
+            null
+          ]
+        }
+      ]
+    }
+  ]
+}
