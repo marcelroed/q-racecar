@@ -27,7 +27,7 @@ class Game:
         return sensors, reward
 
     def render(self):
-        if self.window is None:
+        if self.screen is None:
             pygame.init()
             pygame.display.set_caption('Q-racing')
             self.window = pygame.display.set_mode(self.level.dimensions)
@@ -47,12 +47,11 @@ class Level:
     def __init__(self):
         self.walls = []
         self.checkpoints = []
+        self.dimensions = (1366, 768)
+        self.load_file()
 
     def load_file(self):
-        level = None
-        with codecs.open('level1.json', 'r', encoding='UTF-8') as f:
+        with codecs.open('../assets/levels/level1/level.json', 'r', encoding='UTF-8') as f:
             level = json.load(f)
-        self.walls =
-
-
-if __name__ == '__main__':
+        self.walls = level['walls']
+        self.checkpoints = level['checkpoints']
