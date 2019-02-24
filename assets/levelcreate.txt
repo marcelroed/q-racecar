@@ -1,0 +1,5 @@
+// Go to https://npm.runkit.com/parse-svg-path
+var parseSvgPath = require("parse-svg-path")
+JSON.stringify(parseSvgPath("THEPATHSTRING"))
+// Illustrator to export checkpoints
+// Use a script like illustrator-point-exporter
