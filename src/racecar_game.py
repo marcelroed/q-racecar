@@ -16,10 +16,12 @@ ACC = 15
 
 
 class Game:
+    screen: pygame.display
+
     def __init__(self):
         self.level = Level()
-        self.car = Car()
-        self.window = None
+        # self.car = Car(self.level)
+        self.screen = None
 
     def act(self, action):
         reward = self.car.act(action)
@@ -30,7 +32,14 @@ class Game:
         if self.screen is None:
             pygame.init()
             pygame.display.set_caption('Q-racing')
-            self.window = pygame.display.set_mode(self.level.dimensions)
+            self.screen = pygame.display.set_mode(self.level.dimensions)
+        buffer = pygame.Surface(self.screen.get_size())
+        buffer.fill((250, 250, 250))
+        for checkpoint in self.level.checkpoints:
+            print(checkpoint)
+            pygame.draw.line(buffer, (0, 0, 0), *checkpoint)
+        self.screen.blit(buffer, (0, 0))
+        pygame.display.flip()
 
 
 class Car:
