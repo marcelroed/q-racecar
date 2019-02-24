@@ -8,7 +8,7 @@ with codecs.open(leveldir, 'r', encoding='UTF-8') as f:
     walls_in = json.load(f)['level']
 
 with codecs.open(checkpointdir, 'r', encoding='UTF-8') as f:
-    checkpoints_in = json.load(f)['layers']['paths']
+    checkpoints_in = json.load(f)['layers'][0]['paths']
 
 wallpos = 0
 
