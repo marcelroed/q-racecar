@@ -128,10 +128,16 @@ class Car:
 class Level:
     def __init__(self):
         self.walls = []
+        self.wall_lines = []
         self.checkpoints = []
         self.start = []
+        self.start_angle = []
         self.dimensions = (1366, 768)
         self.load_file()
+        # Convert wall points into lines
+        all_walls = self.walls[0] + self.walls[1]
+        for i in range(0, len(all_walls)):
+            self.wall_lines.append((Vector2(all_walls[i - 1]), Vector2(all_walls[i])))
 
     def load_file(self):
         with codecs.open('../assets/levels/level1/level.json', 'r', encoding='UTF-8') as f:
@@ -139,3 +145,4 @@ class Level:
         self.walls = level['walls']
         self.checkpoints = level['checkpoints']
         self.start = level['start']
+        self.start_angle = level['startangle']
