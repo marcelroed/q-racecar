@@ -52,8 +52,8 @@ class Game:
         if init_graphics:
             self.render()
 
-    def act(self, action):
-        reward = self.car.act(action, TIMESTEP)
+    def act(self, actions, dt):
+        reward = self.car.act(actions, dt)
         sensors = self.car.sense(self.level)
         return sensors, reward
 
@@ -121,8 +121,24 @@ class Car:
 
         self.pos += self.vel * dt
 
-    def sense(self):
-        pass
+        # Collision
+        self.colliding = False
+        box = [[point + self.pos for point in line] for line in self.box]
+        for line in box:
+            for wall in self.level.wall_lines:
+                print(line, wall, segment_intersection(wall, line))
+                if segment_intersection(line, wall) is not None:
+                    # print("Colliding!")
+                    self.colliding = True
+                    break
+        # print(self.pos)
+        # self.angle += 1
+
+    def sense(self, level):
+        sensors = {}
+        # Check collision
+        sensors['colliding'] = True
+        return sensors
 
 
 class Level:
