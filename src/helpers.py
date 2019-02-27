@@ -71,8 +71,7 @@ def _slope_and_intercept(line):
         slope = (p2[1] - p1[1]) / (p2[0] - p1[0])
         return slope, p1[1] - slope * p1[0]
 
-def rot_center(image, rect, angle):
-    """rotate an image while keeping its center"""
-    rot_image = rotate(image, angle)
-    rot_rect = rot_image.get_rect(center=rect.center)
-    return rot_image, rot_rect
+
+if __name__ == '__main__':
+    # Test intersection
+    assert segment_intersection([Vector2(0, 0), Vector2(10, 10)], (Vector2(5, 0), Vector2(0, 5))) is not None
