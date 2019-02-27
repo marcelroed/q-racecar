@@ -24,6 +24,7 @@ class Colors:
     BG = (250, 250, 250, 255)
     TRACK = (80, 80, 80, 255)
     CAR = (255, 0, 0, 255)
+    CAR_WINDSHIELD = (0, 255, 255, 255)
 
 
 class Sprites:
@@ -36,16 +37,20 @@ class Sprites:
 
     def make_car_sprite(self):
         self.car_sprite.fill(Colors.CAR)
+        w, h = CAR_DIM
+        self.car_sprite.fill(Colors.CAR_WINDSHIELD, (w - 7, 0, 7, h))
         pygame.draw.rect(self.car_sprite, (0, 0, 0, 255), self.car_rect, 2)
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, init_graphics=False):
         self.level = Level()
         self.car = Car(self.level)
         self.screen = None
         self.bg = None
         self.sprites = None
+        if init_graphics:
+            self.render()
 
     def act(self, action):
         reward = self.car.act(action, TIMESTEP)
@@ -68,12 +73,15 @@ class Game:
                 pygame.gfxdraw.filled_polygon(self.bg, self.level.walls[layer], color)
             # Checkpoints
             for checkpoint in self.level.checkpoints:
-                pygame.draw.line(self.bg, (0, 0, 0), *checkpoint)
+                pygame.draw.line(self.bg, Colors.BG, *checkpoint)
         # Car
-        car_buf = pygame.transform.rotozoom(self.sprites.car_sprite, self.car.dir, 1)
+        car_buf = self.sprites.car_sprite.copy()
+        if self.car.colliding:
+            car_buf.fill((0, 0, 255))
+        car_buf = pygame.transform.rotozoom(car_buf, -self.car.angle, 1)
         # Compose layers
         self.screen.blit(self.bg, (0, 0))
-        self.screen.blit(car_buf, (500, 500))
+        self.screen.blit(car_buf, self.car.pos - Vector2(car_buf.get_size()) / 2)
         pygame.display.flip()
 
 
