@@ -1,14 +1,15 @@
-from math import pi
 from enum import Enum, unique
-from src.helpers import make_len, vec_len, add_to, rot_center
+from src.helpers import segment_intersection
 import pygame, pygame.gfxdraw
 from pygame.math import Vector2
 import codecs, json
 
-MAX_VEL = 20
-ACC = 15
-TIMESTEP = 1 / 30
-CAR_DIM = (20, 50)
+MAX_VEL = 300
+ACC = 200
+CAR_DIM = (30, 15)
+TURNSPEED = 200
+FRICTION = 0.03
+IDLE_BREAK = 0.97
 
 
 @unique
@@ -78,18 +79,39 @@ class Game:
 
 class Car:
     def __init__(self, level):
-        self.pos = level.start
-        self.vel = [0, 0]
-        self.dir = 96
+        print('start: {}'.format(level.start))
+        self.level = level
+        self.pos = Vector2(level.start)
+        self.vel = Vector2(0, 0)
+        self.angle = level.start_angle
+        self.bounding_box = None
+        self.colliding = True
+        # Make bounding box as array of lines
+        w, h = CAR_DIM
+        self.box = [(Vector2(0, e), Vector2(w, e)) for e in (0, h)] + [(Vector2(e, 0), Vector2(e, h)) for e in (0, w)]
 
-    def act(self, action, timestep):
-        if action[Controls.FRONT]:
-            self.vel += ACC * timestep
+    def act(self, actions, dt):
+        dir = Vector2()
+        dir.from_polar((1, self.angle))
+        if Controls.FRONT not in actions:
+            self.vel *= IDLE_BREAK
+        for action in actions:
+            if action == Controls.FRONT:
+                self.vel += dir * ACC * dt
+            if action == Controls.LEFT:
+                self.angle -= TURNSPEED * dt
+            if action == Controls.RIGHT:
+                self.angle += TURNSPEED * dt
+            if action == Controls.BACK:
+                self.vel -= dir * ACC * dt
 
-        if vec_len(self.vel) > MAX_VEL:
-            make_len(self.vel, MAX_VEL)
+        if self.vel.length() > MAX_VEL:
+            self.vel = MAX_VEL * self.vel.normalize()
 
-        add_to(self.pos, self.vel)
+        # Friction
+        self.vel -= (self.vel - dir.dot(self.vel) * dir) * FRICTION
+
+        self.pos += self.vel * dt
 
     def sense(self):
         pass
