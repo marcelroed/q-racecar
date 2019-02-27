@@ -1,8 +1,32 @@
-from pygame.transform import rotate
+from pygame import Rect
+from pygame.math import Vector2
 
 
-def vec_len(vector):
-    return sum((i ** 2 for i in vector))
+def segment_intersection(l1, l2):
+    """
+    Return point of intersection if it exists.
+    :param l1: Line 1
+    :param l2: Line 2
+    :return: Point (x,y) if intersection exists, otherwise None
+    """
+    # Intersection point given infinite lines
+    p = _intersection(l1, l2)
+    if p is None:
+        print('failed initial intersection:')
+        return None
+
+    # Check that this intersection is within the boundaries of both lines
+    # Rectangles represent boundaries for lines
+    l1 = [i for i in l1]
+    l2 = [i for i in l2]
+    r1, r2 = (Rect(l[0], [l[1][i] - l[0][i] for i in range(2)]) for l in (l1, l2))
+    r1.normalize()
+    r2.normalize()
+
+    if r1.collidepoint(p) and r2.collidepoint(p):
+        return p
+    return None
+
 
 def _intersection(l1, l2):
     """
