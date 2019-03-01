@@ -22,6 +22,10 @@ def segment_intersection(l1, l2):
     r1, r2 = (Rect(l[0], [l[1][i] - l[0][i] for i in range(2)]) for l in (l1, l2))
     r1.normalize()
     r2.normalize()
+    for r in (r1, r2):
+        r.w = max(r.w, 1)
+        r.h = max(r.h, 1)
+    # print(r1, r2)
 
     if r1.collidepoint(p) and r2.collidepoint(p):
         return p
@@ -75,3 +79,4 @@ def _slope_and_intercept(line):
 if __name__ == '__main__':
     # Test intersection
     assert segment_intersection([Vector2(0, 0), Vector2(10, 10)], (Vector2(5, 0), Vector2(0, 5))) is not None
+    assert segment_intersection(Vector2(50, 50), Vector2())
