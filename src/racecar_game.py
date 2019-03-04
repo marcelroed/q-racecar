@@ -45,10 +45,11 @@ class Sprites:
 class Game:
     def __init__(self, init_graphics=False):
         self.level = Level()
-        self.car = Car(self.level)
+        self.car = Car(self)
         self.screen = None
         self.bg = None
         self.sprites = None
+        self.logic_buffer = None
         if init_graphics:
             self.render()
 
@@ -82,13 +83,16 @@ class Game:
         # Compose layers
         self.screen.blit(self.bg, (0, 0))
         self.screen.blit(car_buf, self.car.pos - Vector2(car_buf.get_size()) / 2)
+        if self.logic_buffer is not None:
+            self.screen.blit(self.logic_buffer, (0, 0))
         pygame.display.flip()
 
 
 class Car:
-    def __init__(self, level):
+    def __init__(self, game):
+        self.game = game
+        level = game.level
         print('start: {}'.format(level.start))
-        self.level = level
         self.pos = Vector2(level.start)
         self.vel = Vector2(0, 0)
         self.angle = level.start_angle
@@ -99,6 +103,8 @@ class Car:
         self.box = [(Vector2(0, e), Vector2(w, e)) for e in (0, h)] + [(Vector2(e, 0), Vector2(e, h)) for e in (0, w)]
 
     def act(self, actions, dt):
+        self.game.logic_buffer = pygame.Surface(self.game.screen.get_size(), pygame.SRCALPHA, 32)
+        self.game.logic_buffer = self.game.logic_buffer.convert_alpha()
         dir = Vector2()
         dir.from_polar((1, self.angle))
         if Controls.FRONT not in actions:
@@ -125,9 +131,9 @@ class Car:
         self.colliding = False
         box = [[point + self.pos for point in line] for line in self.box]
         for line in box:
-            for wall in self.level.wall_lines:
-                print(line, wall, segment_intersection(wall, line))
+            for wall in self.game.level.wall_lines:
                 if segment_intersection(line, wall) is not None:
+                    pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *wall, 4)
                     # print("Colliding!")
                     self.colliding = True
                     break
