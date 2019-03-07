@@ -2,6 +2,46 @@ from pygame import Rect
 from pygame.math import Vector2
 
 
+class Line:
+    def __init__(self, p1, p2):
+        self.first = p1
+        self.second = p2
+
+    def __getitem__(self, item):
+        if item == 0:
+            return self.first
+        elif item == 1:
+            return self.second
+        else:
+            raise IndexError()
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n >= 2:
+            raise StopIteration
+        res = self[self.n]
+        self.n += 1
+        return res
+
+
+def rotate_line(l, p, angle):
+    """
+        Rotate line around point
+        :param l: The line to rotate
+        :param p: The point to rotate about
+        :return: A new, rotated line
+    """
+    return list(map(lambda point: rotate_point(point, p, angle), l))
+
+
+def rotate_point(point, anchor, angle):
+    dist_vec = point - anchor
+    return anchor + dist_vec.rotate(angle)
+
+
 def segment_intersection(l1, l2):
     """
     Return point of intersection if it exists.

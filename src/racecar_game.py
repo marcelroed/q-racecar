@@ -1,8 +1,10 @@
 from enum import Enum, unique
-from src.helpers import segment_intersection
+from heapq import heappush, nsmallest
+from src.helpers import segment_intersection, rotate_line
 import pygame, pygame.gfxdraw
 from pygame.math import Vector2
 import codecs, json
+from src.abstracts import Drawable, Entity
 
 MAX_VEL = 300
 ACC = 200
@@ -45,13 +47,22 @@ class Sprites:
 class Game:
     def __init__(self, init_graphics=False):
         self.level = Level()
+
+        self.entities = []
+        self.drawables = []
+
         self.car = Car(self)
+        self.entities.append(self.car)
         self.screen = None
         self.bg = None
         self.sprites = None
         self.logic_buffer = None
         if init_graphics:
-            self.render()
+            pygame.init()
+            pygame.display.set_caption('Q-racing')
+            self.screen = pygame.display.set_mode(self.level.dimensions)
+            self.sprites = Sprites()
+
 
     def act(self, actions, dt):
         reward = self.car.act(actions, dt)
@@ -59,22 +70,7 @@ class Game:
         return sensors, reward
 
     def render(self):
-        if self.screen is None:
-            pygame.init()
-            pygame.display.set_caption('Q-racing')
-            self.screen = pygame.display.set_mode(self.level.dimensions)
-            self.sprites = Sprites()
         # Initialize permanent background buffer
-        if self.bg is None:
-            self.bg = pygame.Surface(self.screen.get_size())
-            self.bg.fill(Colors.BG)
-            # Track, both inner and outer walls
-            for layer, color in zip(range(2), (Colors.TRACK, Colors.BG)):
-                pygame.gfxdraw.aapolygon(self.bg, self.level.walls[layer], color)
-                pygame.gfxdraw.filled_polygon(self.bg, self.level.walls[layer], color)
-            # Checkpoints
-            for checkpoint in self.level.checkpoints:
-                pygame.draw.line(self.bg, Colors.BG, *checkpoint)
         # Car
         car_buf = self.sprites.car_sprite.copy()
         if self.car.colliding:
@@ -88,7 +84,35 @@ class Game:
         pygame.display.flip()
 
 
-class Car:
+class BG(Drawable):
+    def __init__(self, game):
+        # Initialize permanent background buffer
+        self.buffer = pygame.Surface(game.screen.get_size())
+        self.buffer.fill(Colors.BG)
+        # Track, both inner and outer walls
+        for layer, color in zip(range(2), (Colors.TRACK, Colors.BG)):
+            pygame.gfxdraw.aapolygon(self.buffer, game.level.walls[layer], color)
+            pygame.gfxdraw.filled_polygon(self.buffer, game.level.walls[layer], color)
+        # Checkpoints
+        for checkpoint in game.level.checkpoints:
+            pygame.draw.line(self.buffer, Colors.BG, *checkpoint)
+
+    def draw(self, surface, dt):
+        surface.blit(self.buffer)
+
+    @property
+    def z_index(self):
+        return -999
+
+
+class Car(Entity):
+    @property
+    def z_index(self):
+        return 2
+
+    def draw(self, surface, dt):
+
+
     def __init__(self, game):
         self.game = game
         level = game.level
@@ -137,6 +161,9 @@ class Car:
                     # print("Colliding!")
                     self.colliding = True
                     break
+        line = [Vector2(300, 400), Vector2(340, 400)]
+        line = rotate_line(line, Vector2(300, 400), self.angle)
+        pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
         # print(self.pos)
         # self.angle += 1
 
