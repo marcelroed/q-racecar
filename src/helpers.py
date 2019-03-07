@@ -118,5 +118,7 @@ def _slope_and_intercept(line):
 
 if __name__ == '__main__':
     # Test intersection
-    assert segment_intersection([Vector2(0, 0), Vector2(10, 10)], (Vector2(5, 0), Vector2(0, 5))) is not None
-    assert segment_intersection(Vector2(50, 50), Vector2())
+    # assert segment_intersection([Vector2(0, 0), Vector2(10, 10)], (Vector2(5, 0), Vector2(0, 5))) is not None
+    # assert segment_intersection(Vector2(50, 50), Vector2())
+    line = Line(Vector2(1, 2), Vector2(3, 4))
+    print(list(map(lambda v: "Vector: ({}, {})".format(*v), line)))
