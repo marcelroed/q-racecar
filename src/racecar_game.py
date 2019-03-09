@@ -46,34 +46,37 @@ class Sprites:
 
 class Game:
     def __init__(self, init_graphics=False):
-        self.level = Level()
-
-        self.entities = []
-        self.drawables = []
-        self.car = Car(self)
-        self.entities.append(self.car)
-        self.drawables.append(self.car)
-
         self.screen = None
         self.bg = None
         self.sprites = None
         self.logic_buffer = None
+        self.level = Level()
+
         if init_graphics:
             pygame.init()
             pygame.display.set_caption('Q-racing')
             self.screen = pygame.display.set_mode(self.level.dimensions)
             self.sprites = Sprites()
 
-    def act(self, actions, dt):
-        reward = self.car.act(actions, dt)
-        sensors = self.car.sense(self.level)
-        return sensors, reward
 
-    def render(self):
-        # Initialize permanent background buffer
-        # Car
+        self.entities = []
+        self.drawables = []
+        self.drawables.append(BG(self))
+        self.car = Car(self)
+        self.entities.append(self.car)
+        self.drawables.append(self.car)
+
+
+    def act(self, actions, dt):
+        sensors = {}
+        for entity in self.entities:
+            sensors = {**sensors, **entity.act(actions, dt)}
+        return sensors
+
+    def render(self, dt):
+        for drawable in self.drawables:
+            drawable.draw(self.screen, dt)
         # Compose layers
-        self.screen.blit(self.bg, (0, 0))
         if self.logic_buffer is not None:
             self.screen.blit(self.logic_buffer, (0, 0))
         pygame.display.flip()
@@ -93,7 +96,7 @@ class BG(Drawable):
             pygame.draw.line(self.buffer, Colors.BG, *checkpoint)
 
     def draw(self, surface, dt):
-        surface.blit(self.buffer)
+        surface.blit(self.buffer, (0, 0))
 
     @property
     def z_index(self):
@@ -109,7 +112,7 @@ class Car(Entity):
         car_buf = self.game.sprites.car_sprite.copy()
         if self.colliding:
             car_buf.fill((0, 0, 255))
-        car_buf = pygame.transform.rotozoom(car_buf, -self.car.angle, 1)
+        car_buf = pygame.transform.rotozoom(car_buf, -self.angle, 1)
         surface.blit(car_buf, self.pos - Vector2(car_buf.get_size()) / 2)
 
     def __init__(self, game):
@@ -165,9 +168,9 @@ class Car(Entity):
         pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
         # print(self.pos)
         # self.angle += 1
-        return self.sense(self.game.level)
+        return self.sense()
 
-    def sense(self, level):
+    def sense(self):
         sensors = {}
         # Check collision
         sensors['colliding'] = True
