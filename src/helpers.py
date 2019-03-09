@@ -55,6 +55,10 @@ def segment_intersection(l1, l2):
         print('failed initial intersection:')
         return None
 
+    for coord in p:
+        if abs(coord) > 1e5:
+            return None
+
     # Check that this intersection is within the boundaries of both lines
     # Rectangles represent boundaries for lines
     l1 = [i for i in l1]
