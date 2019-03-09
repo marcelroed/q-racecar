@@ -71,6 +71,10 @@ class Game:
             sensors = {**sensors, **entity.act(actions, dt)}
         return sensors
 
+    def reset(self):
+        self.level.reset()
+        self.car = Car(self)
+
     def render(self, dt):
         for drawable in self.drawables:
             drawable.draw(self.screen, dt)
@@ -141,9 +145,13 @@ class Car(Entity):
             for wall in self.game.level.wall_lines:
                 if segment_intersection(line, wall) is not None:
                     pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *wall, 4)
-                    # print("Colliding!")
                     self.colliding = True
                     break
+            # Collide with checkpoint
+            if segment_intersection(line, self.game.level.current_checkpoint):
+                # TODO Add reward
+                self.game.level.increment_checkpoint()
+        # Collide checkpoint
         line = [Vector2(300, 400), Vector2(340, 400)]
         line = rotate_line(line, Vector2(300, 400), self.angle)
         pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
@@ -206,7 +214,10 @@ class Level(Drawable):
         return self.checkpoints[self._check_idx]
 
     def increment_checkpoint(self):
-        self._check_idx += -1 if self.checkpoints_reversed else 1
+        self._check_idx = (self._check_idx - 1 if self.checkpoints_reversed else 1) % len(self.checkpoints)
+
+    def reset(self):
+        self._check_idx = -1
 
     def _load_file(self):
         with codecs.open('../assets/levels/level1/level.json', 'r', encoding='UTF-8') as f:
