@@ -8,7 +8,7 @@ from src.abstracts import Drawable, Entity
 
 MAX_VEL = 300
 ACC = 200
-CAR_DIM = (30, 15)
+CAR_DIM = Vector2(30, 15)
 TURNSPEED = 200
 FRICTION = 0.03
 IDLE_BREAK = 0.97
@@ -50,7 +50,7 @@ class Game:
         self.bg = None
         self.sprites = None
         self.logic_buffer = None
-        self.level = Level()
+        self.level = Level(self)
 
         if init_graphics:
             pygame.init()
@@ -58,14 +58,12 @@ class Game:
             self.screen = pygame.display.set_mode(self.level.dimensions)
             self.sprites = Sprites()
 
-
         self.entities = []
         self.drawables = []
-        self.drawables.append(BG(self))
+        self.drawables.append(self.level)
         self.car = Car(self)
         self.entities.append(self.car)
         self.drawables.append(self.car)
-
 
     def act(self, actions, dt):
         sensors = {}
@@ -80,27 +78,6 @@ class Game:
         if self.logic_buffer is not None:
             self.screen.blit(self.logic_buffer, (0, 0))
         pygame.display.flip()
-
-
-class BG(Drawable):
-    def __init__(self, game):
-        # Initialize permanent background buffer
-        self.buffer = pygame.Surface(game.screen.get_size())
-        self.buffer.fill(Colors.BG)
-        # Track, both inner and outer walls
-        for layer, color in zip(range(2), (Colors.TRACK, Colors.BG)):
-            pygame.gfxdraw.aapolygon(self.buffer, game.level.walls[layer], color)
-            pygame.gfxdraw.filled_polygon(self.buffer, game.level.walls[layer], color)
-        # Checkpoints
-        for checkpoint in game.level.checkpoints:
-            pygame.draw.line(self.buffer, Colors.BG, *checkpoint)
-
-    def draw(self, surface, dt):
-        surface.blit(self.buffer, (0, 0))
-
-    @property
-    def z_index(self):
-        return -999
 
 
 class Car(Entity):
@@ -155,8 +132,12 @@ class Car(Entity):
 
         # Collision
         self.colliding = False
-        box = [[point + self.pos for point in line] for line in self.box]
+        box = [[point + self.pos - CAR_DIM / 2 for point in line] for line in self.box]
+        # Translate
+        # Rotate
+        box = list(map(lambda line: rotate_line(line, self.pos, self.angle), box))
         for line in box:
+            pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
             for wall in self.game.level.wall_lines:
                 if segment_intersection(line, wall) is not None:
                     pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *wall, 4)
@@ -171,27 +152,63 @@ class Car(Entity):
         return self.sense()
 
     def sense(self):
-        sensors = {}
-        # Check collision
-        sensors['colliding'] = True
-        return sensors
+        sensors = {
+            'colliding': self.colliding
+        }
+        return {'car': sensors}
 
 
-class Level:
-    def __init__(self):
+class Level(Drawable):
+    @property
+    def z_index(self):
+        return -1
+
+    def draw(self, surface, dt):
+        if self.bg_buffer is None:
+            self._init_bg(self.game)
+        # Draw BG buffer
+        surface.blit(self.bg_buffer, (0, 0))
+        # Current checkpoint
+        pygame.draw.line(surface, (0, 255, 0), *self.checkpoints[self._check_idx], 5)
+
+    def _init_bg(self, game):
+        # Initialize permanent background buffer
+        self.bg_buffer = pygame.Surface(game.screen.get_size())
+        self.bg_buffer.fill(Colors.BG)
+        # Track, both inner and outer walls
+        for layer, color in zip(range(2), (Colors.TRACK, Colors.BG)):
+            pygame.gfxdraw.aapolygon(self.bg_buffer, self.walls[layer], color)
+            pygame.gfxdraw.filled_polygon(self.bg_buffer, self.walls[layer], color)
+        # Checkpoints
+        for checkpoint in self.checkpoints:
+            pygame.draw.line(self.bg_buffer, Colors.BG, *checkpoint)
+
+    def __init__(self, game):
+        self.game = game
         self.walls = []
         self.wall_lines = []
         self.checkpoints = []
+        self._check_idx = -1
         self.start = []
         self.start_angle = []
+        self.checkpoints_reversed = True
         self.dimensions = (1366, 768)
-        self.load_file()
+        self._load_file()
         # Convert wall points into lines
-        all_walls = self.walls[0] + self.walls[1]
-        for i in range(0, len(all_walls)):
-            self.wall_lines.append((Vector2(all_walls[i - 1]), Vector2(all_walls[i])))
+        for walls in self.walls:
+            for i in range(0, len(walls)):
+                self.wall_lines.append((Vector2(walls[i - 1]), Vector2(walls[i])))
+        # Initialize BG buffer
+        self.bg_buffer = None
 
-    def load_file(self):
+    @property
+    def current_checkpoint(self):
+        return self.checkpoints[self._check_idx]
+
+    def increment_checkpoint(self):
+        self._check_idx += -1 if self.checkpoints_reversed else 1
+
+    def _load_file(self):
         with codecs.open('../assets/levels/level1/level.json', 'r', encoding='UTF-8') as f:
             level = json.load(f)
         self.walls = level['walls']
