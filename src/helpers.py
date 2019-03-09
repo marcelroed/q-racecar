@@ -67,8 +67,8 @@ def segment_intersection(l1, l2):
     r1.normalize()
     r2.normalize()
     for r in (r1, r2):
-        r.w = max(r.w, 1)
-        r.h = max(r.h, 1)
+        r.w = max(r.w, 3)
+        r.h = max(r.h, 3)
     # print(r1, r2)
 
     if r1.collidepoint(p) and r2.collidepoint(p):
