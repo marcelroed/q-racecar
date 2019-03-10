@@ -27,6 +27,24 @@ class Line:
         return res
 
 
+def translate_shape(shape, by_vec):
+    # Assumes shapes are a list of lines
+    return [translate_line(l, by_vec) for l in shape]
+
+
+def translate_line(line, by_vec):
+    # Assumes lines are a list of points (Vector2)
+    return [point + by_vec for point in line]
+
+
+def translate_point(point, by_vec):
+    return point + by_vec
+
+
+def rotate_shape(shape, point, angle):
+    return [rotate_line(l, point, angle) for l in shape]
+
+
 def rotate_line(l, p, angle):
     """
         Rotate line around point
