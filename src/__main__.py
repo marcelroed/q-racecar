@@ -1,6 +1,8 @@
-from pygame.time import Clock
-import pygame
 from sys import exit
+
+import pygame
+from pygame.time import Clock
+
 from src.racecar_game import Game, Controls
 
 controls = {
@@ -12,6 +14,7 @@ controls = {
 
 
 def main():
+    # cProfile.run('player_game()', sort='tottime')
     player_game()
 
 
@@ -34,6 +37,7 @@ def player_game():
             if pressed[key]:
                 control.append(action)
         response = game.act(control, dt)
+        print(response)
         game.render(dt)
 
 
