@@ -18,8 +18,6 @@ TURNSPEED = 200
 FRICTION = 0.03
 IDLE_BREAK = 0.97
 
-CHECKPOINT_REWARD = 10
-
 
 @unique
 class Controls(Enum):
@@ -125,7 +123,8 @@ class Car(Entity):
         self.box = [(Vector2(0, e), Vector2(w, e)) for e in (0, h)] + [(Vector2(e, 0), Vector2(e, h)) for e in (0, w)]
         self.lasers = self._init_lasers()
 
-    def _init_lasers(self):
+    @staticmethod
+    def _init_lasers():
         w, h = CAR_DIM
         lasers = {
             'front': [Vector2(w, h / 2), Vector2(w + LASER_LENGTH, h / 2)],
@@ -142,6 +141,8 @@ class Car(Entity):
         return lasers
 
     def act(self, actions, dt):
+        self.sensors = {
+        }
         self.game.logic_buffer = pygame.Surface(self.game.screen.get_size(), pygame.SRCALPHA, 32)
         self.game.logic_buffer = self.game.logic_buffer.convert_alpha()
         dir = Vector2()
@@ -197,20 +198,15 @@ class Car(Entity):
                     break
             # Collide with checkpoint
             if segment_intersection(line, self.game.level.current_checkpoint):
-                self.sensors['reward'] = CHECKPOINT_REWARD
+                self.sensors['checkpoint'] = True
                 self.game.level.increment_checkpoint()
         # Collide checkpoint
-        line = [Vector2(300, 400), Vector2(340, 400)]
-        line = rotate_line(line, Vector2(300, 400), self.angle)
-        # pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
         # print(self.pos)
         # self.angle += 1
         return self.sense()
 
     def sense(self):
         self.sensors = {
-            'reward': 0,
-            'colliding': False,
             **self.sensors
         }
         return {'car': self.sensors}
