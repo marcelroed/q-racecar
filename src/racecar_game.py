@@ -117,6 +117,7 @@ class Car(Entity):
         self.angle = level.start_angle
         self.bounding_box = None
         self.colliding = True
+        self.since_checkpoint = 0
         self.sensors = {}
         # Make bounding box as array of lines
         w, h = CAR_DIM
@@ -143,6 +144,9 @@ class Car(Entity):
     def act(self, actions, dt):
         self.sensors = {
         }
+        self.since_checkpoint += 1
+        if self.since_checkpoint > 60 * 3:
+            self.sensors['done'] = True
         self.game.logic_buffer = pygame.Surface(self.game.screen.get_size(), pygame.SRCALPHA, 32)
         self.game.logic_buffer = self.game.logic_buffer.convert_alpha()
         dir = Vector2()
@@ -193,11 +197,12 @@ class Car(Entity):
             for wall in self.game.level.wall_lines:
                 if segment_intersection(line, wall) is not None:
                     # pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *wall, 4)
-                    self.sensors['colliding'] = True
+                    self.sensors['done'] = True
                     break
             # Collide with checkpoint
             if segment_intersection(line, self.game.level.current_checkpoint):
                 self.sensors['checkpoint'] = True
+                self.since_checkpoint = 0
                 self.game.level.increment_checkpoint()
         # Collide checkpoint
         # print(self.pos)
@@ -206,6 +211,7 @@ class Car(Entity):
 
     def sense(self):
         self.sensors = {
+            'velocity': self.vel.length(),
             **self.sensors
         }
         return {'car': self.sensors}
