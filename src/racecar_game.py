@@ -74,7 +74,7 @@ class Game:
         sensors = {}
         for entity in self.entities:
             sensors = {**sensors, **entity.act(actions, dt)}
-        if sensors['car']['colliding']:
+        if sensors.get('car', {}).get('colliding', False):
             self.reset()
         return sensors
 
@@ -168,7 +168,6 @@ class Car(Entity):
         self.pos += self.vel * dt
 
         # Collision
-        self.sensors['colliding'] = False
         # Translate and rotate
         box = translate_shape(rotate_shape(self.box, CAR_DIM / 2, self.angle), self.pos - CAR_DIM / 2)
         lasers = translate_shape(rotate_shape(self.lasers.values(), CAR_DIM / 2, self.angle), self.pos - CAR_DIM / 2)
