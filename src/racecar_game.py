@@ -1,17 +1,24 @@
+import codecs
+import heapq
+import json
 from enum import Enum, unique
-from heapq import heappush, nsmallest
-from src.helpers import segment_intersection, rotate_line
-import pygame, pygame.gfxdraw
+
+import pygame
+import pygame.gfxdraw
 from pygame.math import Vector2
-import codecs, json
+
 from src.abstracts import Drawable, Entity
+from src.helpers import segment_intersection, rotate_line, translate_shape, rotate_shape
 
 MAX_VEL = 300
 ACC = 200
 CAR_DIM = Vector2(30, 15)
+LASER_LENGTH = 300
 TURNSPEED = 200
 FRICTION = 0.03
 IDLE_BREAK = 0.97
+
+CHECKPOINT_REWARD = 10
 
 
 @unique
@@ -69,11 +76,18 @@ class Game:
         sensors = {}
         for entity in self.entities:
             sensors = {**sensors, **entity.act(actions, dt)}
+        if sensors['car']['colliding']:
+            self.reset()
         return sensors
 
     def reset(self):
         self.level.reset()
+        # TODO: Find a better way to reset car
+        self.drawables.remove(self.car)
+        self.entities.remove(self.car)
         self.car = Car(self)
+        self.entities.append(self.car)
+        self.drawables.append(self.car)
 
     def render(self, dt):
         for drawable in self.drawables:
@@ -105,9 +119,27 @@ class Car(Entity):
         self.angle = level.start_angle
         self.bounding_box = None
         self.colliding = True
+        self.sensors = {}
         # Make bounding box as array of lines
         w, h = CAR_DIM
         self.box = [(Vector2(0, e), Vector2(w, e)) for e in (0, h)] + [(Vector2(e, 0), Vector2(e, h)) for e in (0, w)]
+        self.lasers = self._init_lasers()
+
+    def _init_lasers(self):
+        w, h = CAR_DIM
+        lasers = {
+            'front': [Vector2(w, h / 2), Vector2(w + LASER_LENGTH, h / 2)],
+            'front_left': rotate_line([Vector2(w, 0), Vector2(w + LASER_LENGTH, 0)], Vector2(w, 0), -5),
+            'front_left_diag': rotate_line([Vector2(w, 0), Vector2(w + LASER_LENGTH, 0)], Vector2(w, 0), -45),
+            'front_left_perp': rotate_line([Vector2(w, 0), Vector2(w + LASER_LENGTH, 0)], Vector2(w, 0), -90),
+            'front_right': rotate_line([Vector2(w, h), Vector2(w + LASER_LENGTH, h)], Vector2(w, 0), 5),
+            'front_right_diag': rotate_line([Vector2(w, h), Vector2(w + LASER_LENGTH, h)], Vector2(w, h), 45),
+            'front_right_perp': rotate_line([Vector2(w, h), Vector2(w + LASER_LENGTH, h)], Vector2(w, h), 90),
+            'back': [Vector2(0, h / 2), Vector2(-LASER_LENGTH, h / 2)],
+            'back_left_diag': rotate_line([Vector2(0, 0), Vector2(-LASER_LENGTH, 0)], Vector2(0, 0), 45),
+            'back_right_diag': rotate_line([Vector2(0, h), Vector2(-LASER_LENGTH, h)], Vector2(0, h), -45),
+        }
+        return lasers
 
     def act(self, actions, dt):
         self.game.logic_buffer = pygame.Surface(self.game.screen.get_size(), pygame.SRCALPHA, 32)
@@ -135,35 +167,53 @@ class Car(Entity):
         self.pos += self.vel * dt
 
         # Collision
-        self.colliding = False
-        box = [[point + self.pos - CAR_DIM / 2 for point in line] for line in self.box]
-        # Translate
-        # Rotate
-        box = list(map(lambda line: rotate_line(line, self.pos, self.angle), box))
+        self.sensors['colliding'] = False
+        # Translate and rotate
+        box = translate_shape(rotate_shape(self.box, CAR_DIM / 2, self.angle), self.pos - CAR_DIM / 2)
+        lasers = translate_shape(rotate_shape(self.lasers.values(), CAR_DIM / 2, self.angle), self.pos - CAR_DIM / 2)
+        # Collide lasers
+        laserdists = []
+        for laser in lasers:
+            intersections = []
+            for wall in self.game.level.wall_lines:
+                isect = segment_intersection(laser, wall)
+                if isect is not None:
+                    heapq.heappush(intersections, ((isect - laser[0]).length(), isect))
+            if len(intersections):
+                isect = heapq.heappop(intersections)
+                # print(isect)
+                laserdists.append(isect[0])
+                pygame.draw.circle(self.game.logic_buffer, (0, 0, 0), [int(i) for i in isect[1]], 3)
+            else:
+                laserdists.append(LASER_LENGTH)
+            # pygame.draw.line(self.game.logic_buffer, (255, 0, 0), *laser, 2)
+        self.sensors['lasers'] = dict(zip(self.lasers.keys(), laserdists))
         for line in box:
-            pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
+            # pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
             for wall in self.game.level.wall_lines:
                 if segment_intersection(line, wall) is not None:
-                    pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *wall, 4)
-                    self.colliding = True
+                    # pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *wall, 4)
+                    self.sensors['colliding'] = True
                     break
             # Collide with checkpoint
             if segment_intersection(line, self.game.level.current_checkpoint):
-                # TODO Add reward
+                self.sensors['reward'] = CHECKPOINT_REWARD
                 self.game.level.increment_checkpoint()
         # Collide checkpoint
         line = [Vector2(300, 400), Vector2(340, 400)]
         line = rotate_line(line, Vector2(300, 400), self.angle)
-        pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
+        # pygame.draw.line(self.game.logic_buffer, (0, 0, 0), *line, 4)
         # print(self.pos)
         # self.angle += 1
         return self.sense()
 
     def sense(self):
-        sensors = {
-            'colliding': self.colliding
+        self.sensors = {
+            'reward': 0,
+            'colliding': False,
+            **self.sensors
         }
-        return {'car': sensors}
+        return {'car': self.sensors}
 
 
 class Level(Drawable):

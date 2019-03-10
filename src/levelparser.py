@@ -1,4 +1,5 @@
-import codecs, json
+import codecs
+import json
 
 leveldir = '../assets/levels/level1/prewalls.json'
 checkpointdir = '../assets/levels/level1/precheckpoints.json'
