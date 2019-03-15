@@ -74,7 +74,7 @@ class Game:
         sensors = {}
         for entity in self.entities:
             sensors = {**sensors, **entity.act(actions, dt)}
-        if sensors.get('car', {}).get('colliding', False):
+        if sensors.get('car', {}).get('done', False):
             self.reset()
         return sensors
 
