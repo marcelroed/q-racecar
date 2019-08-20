@@ -105,6 +105,8 @@ def _intersection(l1, l2):
     s1, i1 = _slope_and_intercept(l1)
     s2, i2 = _slope_and_intercept(l2)
 
+    # print(s1, i1, s2, i2)
+
     if s1 == s2:
         # Lines are parallel, don't need to handle this case
         return None
@@ -119,12 +121,12 @@ def _intersection(l1, l2):
     if s1 is None:
         # Line 1 is vertical
         x = l1[0][0]
-        y = s2 * x
+        y = s2 * x + i2
         return x, y
 
     # Line 2 is vertical
     x = l2[0][0]
-    y = s1 * x
+    y = s1 * x + i1
     return x, y
 
 

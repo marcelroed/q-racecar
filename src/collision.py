@@ -28,7 +28,7 @@ def segment_intersections(line: list, line_arr: np.array) -> np.array:
     present = p[:, present_mask]
     other_regions = other_regions[:, present_mask]
 
-    print(present.shape, other_regions.shape)
+    # print(present.shape, other_regions.shape)
 
     present[:, (present[0] < main_region[0]) | (present[0] > main_region[1]) |  # Not within main x
                (present[1] < main_region[2]) | (present[1] > main_region[3]) |  # Not within main y
@@ -43,6 +43,7 @@ def segment_intersections(line: list, line_arr: np.array) -> np.array:
 def _intersection(line: list, line_arr: np.array) -> np.array:
     line_slope, line_int = _line_slope_intercept(line)
     slope_int = _slope_and_intercept(line_arr)
+    # print(line_slope, line_int, slope_int)
 
     intersections = np.full(fill_value=np.inf, shape=(2, line_arr.shape[1]))
 
@@ -62,8 +63,9 @@ def _intersection(line: list, line_arr: np.array) -> np.array:
     no_vert = ~((line_slope is None) | np.isnan(slope_int[0]))
     no_vert_slope_int = slope_int[:, no_vert]
 
-    x = (line_int - no_vert_slope_int[1]) / (line_slope - no_vert_slope_int[0])
+    x = (line_int - no_vert_slope_int[1]) / (no_vert_slope_int[0] - line_slope)
     y = (line_slope * x + line_int)
+    # print(x, y)
     intersections[:, no_vert] = np.vstack((x, y))
     dealt |= no_vert
 
@@ -71,12 +73,12 @@ def _intersection(line: list, line_arr: np.array) -> np.array:
     if line_slope is None:
         # Main line is vertical
         x = line[0]
-        y = slope_int[0, ~dealt] * x + line_int
+        y = slope_int[0, ~dealt] * x + slope_int[1, ~dealt]
         intersections[:, ~dealt] = np.vstack((np.full(fill_value=x, shape=np.sum(~dealt)), y))
     else:
         # Other lines are vertical
         x = line_arr[0, ~dealt]
-        y = line_slope * x
+        y = line_slope * x + line_int
         intersections[:, ~dealt] = np.vstack((x, y))
 
     intersections[intersections == np.inf] = np.NaN
