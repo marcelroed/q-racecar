@@ -17,8 +17,8 @@ controls = {
 
 def main():
     # cProfile.run('player_game()', sort='tottime')
-    # player_game()
-    ai_game()
+    player_game()
+    # ai_game()
 
 
 def player_game():
@@ -39,7 +39,7 @@ def player_game():
             if pressed[key]:
                 control.append(action)
         response = game.act(control, dt)
-        print(response)
+        # print(response)
         game.render(dt)
 
 
@@ -69,10 +69,9 @@ def unpack_response(response):
     car = response.get('car', {})
     done = car.pop('done', False)
     reward = car.pop('reward', None)
-    state = list(car.values())
+    state = np.array(car.values())
     print(state)
     return state, reward, done
-
 
 
 if __name__ == '__main__':
